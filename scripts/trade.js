@@ -22,6 +22,9 @@ const main = async () => {
      //sushi https://docs.sushi.com/docs/Developers/Deployment%20Addresses 
      //usdc-uniswapgoerli https://app.uniswap.org/#/tokens/ethereum/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 
      //daiunigoerli https://app.uniswap.org/#/tokens/ethereum/0x6B175474E89094C44Da98b954EedeAC495271d0F
+
+возвращает массив адресов
+    const targetRoute = {router1:uniswap0x, router2:sushi0x, token1:baseusdc0x, token2:tokens0x} 
   */
   const searchForRoutes = () => {
     const targetRoute = {};
@@ -31,3 +34,17 @@ const main = async () => {
     targetRoute.token2 = config.tokens[Math.floor(Math.random()*config.tokens.length)].address;
     return targetRoute;
   }
+
+//пробегается по списку роутесов и заряжает переменные таргетроут ак только доходит до конца обнуляется  
+let goodCount = 0;
+const useGoodRoutes = () => {
+  const targetRoute = {};
+  const route = config.routes[goodCount];
+  goodCount += 1;
+  if (goodCount >= config.routes.length) goodCount = 0;
+  targetRoute.router1 = route[0];
+  targetRoute.router2 = route[1];
+  targetRoute.token1 = route[2];
+  targetRoute.token2 = route[3];
+  return targetRoute;
+}
