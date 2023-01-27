@@ -18,7 +18,7 @@ interface IERC20 {
 
 //7) сюда идёт выяснять amountOutMins (цену свапа?) 83.5654 Price Impact 7.05%
 interface IUniswapV2Router {
-	//вызывая эту функцию с 90 относительно массива адесов токенов из пункта 4            вовращает массив цены обмена? 
+	//вызывая эту функцию с 90 относительно массива адесов токенов из пункта 4            вовращает массив цены обмена? в пункт 5 ниже
   function getAmountsOut(uint256 amountIn, address[] memory path) external view returns (uint256[] memory amounts);
   function swapExactTokensForTokens(uint256 amountIn, uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external returns (uint256[] memory amounts);
 }
@@ -53,16 +53,18 @@ contract Arb is Ownable {
 		//115792089237316195423570985008687907853269984665640564039457584007913129639935 может хранить юинт256
 		                                    //5) лезет в интерфейс выше --> IUniswapV2Router c роутерjv трисоляриса в нем вызывает  90     передает два слота с кошельками 
 		uint256[] memory amountOutMins = IUniswapV2Router(router).getAmountsOut(_amount, path);
+		//возвращает цену обмена в пункт 3 ниже
 		return amountOutMins[path.length -1];
 	}
  //2) трисоляр вонасвап юсдт и к примеру даи проверить на 90 вход в контракт сюда
   function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
     //trisolaris usdt/dai 90   
-	//3) пробрасывает в функцию выше -> getAmountOutMin              вангую ответ будет    /83.5654 Price Impact 7.05%
+	//3) пробрасывает в функцию выше -> getAmountOutMin              вангую ответ будет   amtBack1 83.5654 Price Impact 7.05%
 		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
 
-	//wannaswap dai/usdt 83.5654                       /75.4861 Price Impact 10.08%
+	//wannaswap dai/usdt 83.5654                      вангую /75.4861 Price Impact 10.08%
 		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token1, amtBack1);
+		// цена   /75.4861 
 		return amtBack2;
 	}
 	
