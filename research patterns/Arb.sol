@@ -38,18 +38,26 @@ contract Arb is Ownable {
 		uint deadline = block.timestamp + 300;
 		IUniswapV2Router(router).swapExactTokensForTokens(_amount, 1, path, address(this), deadline);
 	}
-
+  //4) пробрасывает сюда trisolaris usdt/dai 90 
 	 function getAmountOutMin(address router, address _tokenIn, address _tokenOut, uint256 _amount) public view returns (uint256) {
+		//создаём в оперативке контракта массив адрессов токенов под именем путь?
 		address[] memory path;
 		path = new address[](2);
+		//usdt
 		path[0] = _tokenIn;
+		//dai
 		path[1] = _tokenOut;
+		                                    //роутер трисоляриса                  90        ?
 		uint256[] memory amountOutMins = IUniswapV2Router(router).getAmountsOut(_amount, path);
 		return amountOutMins[path.length -1];
 	}
  //2) трисоляр вонасвап юсдт и к примеру даи проверить на 90 вход в контракт сюда
   function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
+    //trisolaris usdt/dai 90   
+	//3) пробрасывает в функцию выше -> getAmountOutMin              вангую ответ будет    /83.5654 Price Impact 7.05%
 		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
+
+	//wannaswap dai/usdt 83.5654                       /75.4861 Price Impact 10.08%
 		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token1, amtBack1);
 		return amtBack2;
 	}
