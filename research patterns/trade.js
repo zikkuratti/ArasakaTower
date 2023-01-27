@@ -51,15 +51,23 @@ const lookForDualTrade = async () => {
   try {
     //баланс токена 1 usdt 90
     let tradeSize = balances[targetRoute.token1].balance;
-    //1) трисоляр вонасвап юсдт и к примеру даи проверить на 90 вход в контракт ->Arb.sol
+    //1) трисоляр вонасвап юсдт и к примеру даи проверить на 90 вход в контракт ->Arb.sol    
+    //9)amtBack цена после свапа 75.4861
     const amtBack = await arb.estimateDualDexTrade(targetRoute.router1, targetRoute.router2, targetRoute.token1, targetRoute.token2, tradeSize);
+    //множитель из библы этерс тащит считалку больших чисел и в неё из конфига отгружает BasisPointsPerTrade+ скользяшку в 10000 которую мы можем менять вроде как 10к это цент?
     const multiplier = ethers.BigNumber.from(config.minBasisPointsPerTrade+10000);
+    //размер умножения наши 90 * 10 000 = 900 000
     const sizeMultiplied = tradeSize.mul(multiplier);
+    //делитель 10000 // конструктор вида  { BigNumber: "10000" } https://docs.ethers.org/v5/api/utils/bignumber/
     const divider = ethers.BigNumber.from(10000);
+    //целевой профит опять 90?
     const profitTarget = sizeMultiplied.div(divider);
+    //если роутисы квадриты в конфиге выхлестало или отсутствуют записать в лог ошибку? 
     if (!config.routes.length > 0) {
       fs.appendFile(`./data/${network}RouteLog.txt`, `["${targetRoute.router1}","${targetRoute.router2}","${targetRoute.token1}","${targetRoute.token2}"],`+"\n", function (err) {});
     }
+
+    //Returns true if and only if the value of BigNumber > otherValue.
     if (amtBack.gt(profitTarget)) {
       await dualTrade(targetRoute.router1,targetRoute.router2,targetRoute.token1,targetRoute.token2,tradeSize);
     } else {

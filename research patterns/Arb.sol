@@ -57,14 +57,15 @@ contract Arb is Ownable {
 		return amountOutMins[path.length -1];
 	}
  //2) трисоляр вонасвап юсдт и к примеру даи проверить на 90 вход в контракт сюда
-  function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
-    //trisolaris usdt/dai 90   
+  function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) { 
 	//3) пробрасывает в функцию выше -> getAmountOutMin              вангую ответ будет   amtBack1 83.5654 Price Impact 7.05%
+	    //trisolaris usdt/dai 90  
 		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
 
-	//wannaswap dai/usdt 83.5654                      вангую /75.4861 Price Impact 10.08%
+	//wannaswap dai/usdt  83.5654                                           90   вангую /75.4861 Price Impact 10.08%
 		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token1, amtBack1);
 		// цена   /75.4861 
+		//8) возвращает в trade.js пункт 1 цену актива после свапа она либо меньше стартового либо больше
 		return amtBack2;
 	}
 	
