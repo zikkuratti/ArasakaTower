@@ -16,7 +16,9 @@ interface IERC20 {
 	event Approval(address indexed owner, address indexed spender, uint value);
 }
 
+//7) сюда идёт выяснять amountOutMins (цену свапа?) 83.5654 Price Impact 7.05%
 interface IUniswapV2Router {
+	//вызывая эту функцию с 90 относительно массива адесов токенов из пункта 4            вовращает массив цены обмена? 
   function getAmountsOut(uint256 amountIn, address[] memory path) external view returns (uint256[] memory amounts);
   function swapExactTokensForTokens(uint256 amountIn, uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external returns (uint256[] memory amounts);
 }
@@ -40,14 +42,16 @@ contract Arb is Ownable {
 	}
   //4) пробрасывает сюда trisolaris usdt/dai 90 
 	 function getAmountOutMin(address router, address _tokenIn, address _tokenOut, uint256 _amount) public view returns (uint256) {
-		//создаём в оперативке контракта массив адрессов токенов под именем путь?
+		//создаём в оперативке контракта массив адрессов токенов под именем путь
 		address[] memory path;
+		//делает его фиксированым на 2 слота
 		path = new address[](2);
 		//usdt
 		path[0] = _tokenIn;
 		//dai
 		path[1] = _tokenOut;
-		                                    //роутер трисоляриса                  90        ?
+		//115792089237316195423570985008687907853269984665640564039457584007913129639935 может хранить юинт256
+		                                    //5) лезет в интерфейс выше --> IUniswapV2Router c роутерjv трисоляриса в нем вызывает  90     передает два слота с кошельками 
 		uint256[] memory amountOutMins = IUniswapV2Router(router).getAmountsOut(_amount, path);
 		return amountOutMins[path.length -1];
 	}
