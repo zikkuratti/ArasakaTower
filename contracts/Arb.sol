@@ -97,7 +97,8 @@ function QuadDexTrade(address _router1, address _router2, address _router3, addr
     uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
     //узнаёт баланс воны текущий
     uint token3InitialBalance = IERC20(_token3).balanceOf(address(this));
-
+    //узнаёт баланс авроры текущий
+	uint token4InitialBalance = IERC20(_token4).balanceOf(address(this));
 
 
 	//свайпнуть ниар в доллары на аврорасвап 0xA1B1742e9c32C7cAa9726d8204bD5715e3419861 идём в функцию свап
@@ -116,10 +117,14 @@ function QuadDexTrade(address _router1, address _router2, address _router3, addr
 
     //свап на вона вону в аврору
     swap(_router2,_token3, _token4,tradeableAmount3);	
+    // чекнуть баланс авроры
+    uint token4Balance = IERC20(_token4).balanceOf(address(this));
+	// насвапаный объем авроры
+    uint tradeableAmount4 = token4Balance - token4InitialBalance;	
 
-
-
-
+    //свапнуть на трисоляре аврору в ниру
+	swap(_router3,_token4, _token1,tradeableAmount4);	
+    // чекнуть баланс ниры
     uint endBalance = IERC20(_token1).balanceOf(address(this));
     require(endBalance > startBalance, "Trade Reverted, No Profit Made");
   }
