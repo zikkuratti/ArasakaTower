@@ -28,14 +28,18 @@ interface IUniswapV2Pair {
 }
 
 contract Arb is Ownable {
-
+//                    аврорасвап           ниар           в доллары              все наши
 	function swap(address router, address _tokenIn, address _tokenOut, uint256 _amount) private {
+		//ниар дать аврорасвапу все
 		IERC20(_tokenIn).approve(router, _amount);
+
 		address[] memory path;
 		path = new address[](2);
 		path[0] = _tokenIn;
 		path[1] = _tokenOut;
+		//5минут на исполнение от создания блока 
 		uint deadline = block.timestamp + 300;
+		//                аврорасвап                         все наши         с этого адреса   ждать до 5 минут
 		IUniswapV2Router(router).swapExactTokensForTokens(_amount, 1, path, address(this), deadline);
 	}
 
@@ -48,7 +52,7 @@ contract Arb is Ownable {
 		uint256[] memory amountOutMins = IUniswapV2Router(router).getAmountsOut(_amount, path);
 		return amountOutMins[path.length -1];
 	}
-
+/*
   function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
 		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
 		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token1, amtBack1);
@@ -65,7 +69,7 @@ contract Arb is Ownable {
     uint endBalance = IERC20(_token1).balanceOf(address(this));
     require(endBalance > startBalance, "Trade Reverted, No Profit Made");
   }
-
+*/
 //функция оценки свапа
                                         //аврора              вона              трис     -          ниа                юсдт            вона             аврора
   function estimateQuadDexTrade(address _router1, address _router2, address _router3, address _token1, address _token2, address _token3, address _token4,  uint256 _amount) external view returns (uint256) {
@@ -77,7 +81,7 @@ contract Arb is Ownable {
 		uint256 amtBack3 = getAmountOutMin(_router2, _token3, _token4, amtBack2);
 		//                                  трисоляр   аврора    ниар
 		uint256 amtBack4 = getAmountOutMin(_router3, _token4, _token1, amtBack3);
-		return amtBack3;
+		return amtBack4;
 	}
 
 
@@ -85,17 +89,37 @@ contract Arb is Ownable {
 
 
 //написать функцию            auroraswap
-
-function QuadDexTrade(address _router1, address _router2, address _router3, address _router4, address _token1, address _token2, uint256 _amount) external onlyOwner {
+//                              аврора             вона              трисол              ниар             юсдт               вона             аврора  
+function QuadDexTrade(address _router1, address _router2, address _router3, address _token1, address _token2, address _token3, address _token4,uint256 _amount) external onlyOwner {
     //узнаёт баланс ниры
 	uint startBalance = IERC20(_token1).balanceOf(address(this));
-	
+	//узнаёт баланс юсдт текущий
     uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
-	//свайпнуть ниар в доллары на аврорасвап 0xA1B1742e9c32C7cAa9726d8204bD5715e3419861
+    //узнаёт баланс воны текущий
+    uint token3InitialBalance = IERC20(_token3).balanceOf(address(this));
+
+
+
+	//свайпнуть ниар в доллары на аврорасвап 0xA1B1742e9c32C7cAa9726d8204bD5715e3419861 идём в функцию свап
     swap(_router1,_token1, _token2,_amount);
+	//чекнуть баланс долларов
     uint token2Balance = IERC20(_token2).balanceOf(address(this));
-    uint tradeableAmount = token2Balance - token2InitialBalance;
-    swap(_router2,_token2, _token1,tradeableAmount);
+	// насвапаный объем баксов
+    uint tradeableAmount2 = token2Balance - token2InitialBalance;
+
+	//свапнуть на воне доллары в вону
+    swap(_router2,_token2, _token3,tradeableAmount2);
+    // чекнуть баланс воны
+    uint token3Balance = IERC20(_token3).balanceOf(address(this));
+	// насвапаный объем воны
+    uint tradeableAmount3 = token3Balance - token3InitialBalance;	
+
+    //свап на вона вону в аврору
+    swap(_router2,_token3, _token4,tradeableAmount3);	
+
+
+
+
     uint endBalance = IERC20(_token1).balanceOf(address(this));
     require(endBalance > startBalance, "Trade Reverted, No Profit Made");
   }
