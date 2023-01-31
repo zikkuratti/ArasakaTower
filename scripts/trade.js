@@ -29,14 +29,24 @@ const main = async () => {
   */
   const searchForRoutes = () => {
     const targetRoute = {};
-    targetRoute.router1 = config.routers[Math.floor(Math.random()*config.routers.length)].address;
-    targetRoute.router2 = config.routers[Math.floor(Math.random()*config.routers.length)].address;
-    targetRoute.token1 = config.baseAssets[Math.floor(Math.random()*config.baseAssets.length)].address;
-    targetRoute.token2 = config.tokens[Math.floor(Math.random()*config.tokens.length)].address;
+    //auroraswap 0
+    targetRoute.router1 = config.routers[0].address;
+    //wannaswap 1
+    targetRoute.router2 = config.routers[1].address;
+    //trisolaris 2
+    targetRoute.router3 = config.routers[2].address;
+    // near 0
+    targetRoute.token1 = config.baseAssets[0].address;
+    //usdt 1
+    targetRoute.token2 = config.tokens[1].address;
+    //wanna 2
+    targetRoute.token3 = config.tokens[2].address;
+    //aurora 3
+    targetRoute.token4 = config.tokens[3].address;
     return targetRoute;
   }
 
-//пробегается по списку роутесов и заряжает переменные таргетроут как только доходит до конца обнуляется  
+//пробегается по списку квартетов  роутесов и заряжает переменные таргетроут как только доходит до конца обнуляется  
 let goodCount = 0;
 const useGoodRoutes = () => {
   const targetRoute = {};

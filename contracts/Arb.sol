@@ -65,6 +65,31 @@ contract Arb is Ownable {
     require(endBalance > startBalance, "Trade Reverted, No Profit Made");
   }
 
+//написать функцию            auroraswap
+
+function QuadroDexTrade(address _router1, address _router2, address _router3, address _router4, address _token1, address _token2, uint256 _amount) external onlyOwner {
+    
+	uint startBalance = IERC20(_token1).balanceOf(address(this));
+    uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
+	//свайпнуть ниар в доллары на аврорасвап 0xA1B1742e9c32C7cAa9726d8204bD5715e3419861
+    swap(_router1,_token1, _token2,_amount);
+    uint token2Balance = IERC20(_token2).balanceOf(address(this));
+    uint tradeableAmount = token2Balance - token2InitialBalance;
+    swap(_router2,_token2, _token1,tradeableAmount);
+    uint endBalance = IERC20(_token1).balanceOf(address(this));
+    require(endBalance > startBalance, "Trade Reverted, No Profit Made");
+  }
+
+
+
+
+
+
+
+
+
+
+
 	function estimateTriDexTrade(address _router1, address _router2, address _router3, address _token1, address _token2, address _token3, uint256 _amount) external view returns (uint256) {
 		uint amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
 		uint amtBack2 = getAmountOutMin(_router2, _token2, _token3, amtBack1);
