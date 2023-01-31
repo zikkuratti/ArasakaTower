@@ -39,6 +39,7 @@ contract Arb is Ownable {
 		IUniswapV2Router(router).swapExactTokensForTokens(_amount, 1, path, address(this), deadline);
 	}
 
+// возвращает количество монеток после свапа?
 	 function getAmountOutMin(address router, address _tokenIn, address _tokenOut, uint256 _amount) public view returns (uint256) {
 		address[] memory path;
 		path = new address[](2);
@@ -65,11 +66,30 @@ contract Arb is Ownable {
     require(endBalance > startBalance, "Trade Reverted, No Profit Made");
   }
 
+//функция оценки свапа
+                                        //аврора              вона              трис     -          ниа                юсдт            вона             аврора
+  function estimateQuadDexTrade(address _router1, address _router2, address _router3, address _token1, address _token2, address _token3, address _token4,  uint256 _amount) external view returns (uint256) {
+	//                                        аврора    ниа      юсдт
+		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
+		//                                  вона        юсдт    вона
+		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token3, amtBack1);
+		//                                    вона      вона     аврора
+		uint256 amtBack3 = getAmountOutMin(_router2, _token3, _token4, amtBack2);
+		//                                  трисоляр   аврора    ниар
+		uint256 amtBack4 = getAmountOutMin(_router3, _token4, _token1, amtBack3);
+		return amtBack3;
+	}
+
+
+
+
+
 //написать функцию            auroraswap
 
-function QuadroDexTrade(address _router1, address _router2, address _router3, address _router4, address _token1, address _token2, uint256 _amount) external onlyOwner {
-    
+function QuadDexTrade(address _router1, address _router2, address _router3, address _router4, address _token1, address _token2, uint256 _amount) external onlyOwner {
+    //узнаёт баланс ниры
 	uint startBalance = IERC20(_token1).balanceOf(address(this));
+	
     uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
 	//свайпнуть ниар в доллары на аврорасвап 0xA1B1742e9c32C7cAa9726d8204bD5715e3419861
     swap(_router1,_token1, _token2,_amount);
