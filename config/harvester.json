@@ -1,0 +1,21 @@
+{
+  "duneContract": "0x18537EbA447CAd54408793069f6f41B28eC1918A",
+  "minBasisPointsPerTrade": 0,
+  "routers": [
+    { "dex": "auroraswap", "address": "0xA1B1742e9c32C7cAa9726d8204bD5715e3419861" },
+    { "dex": "wannaswap", "address": "0xa3a1ef5ae6561572023363862e238afa84c72ef5" },
+    { "dex": "trisolaris", "address": "0x2CB45Edb4517d5947aFdE3BEAbF95A582506858B" }
+  ],
+  "baseAssets": [
+    { "sym": "wnear", "address": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d" }
+  ],
+  "tokens": [
+     {"sym": "wNEAR", "address": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d" },
+     {"sym": "USDT", "address": "0x4988a896b1227218e4a686fde5eabdcabd91571f" },
+     {"sym": "WANNA", "address": "0x7faA64Faf54750a2E3eE621166635fEAF406Ab22" },
+     {"sym": "AURORA", "address": "0x8bec47865ade3b172a928df8f990bc7f2a3b9f79" }
+  ],
+  "routes": [
+    ["0xA1B1742e9c32C7cAa9726d8204bD5715e3419861","0xa3a1ef5ae6561572023363862e238afa84c72ef5","0x2CB45Edb4517d5947aFdE3BEAbF95A582506858B","0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d", "0x4988a896b1227218e4a686fde5eabdcabd91571f", "0x7faA64Faf54750a2E3eE621166635fEAF406Ab22","0x8bec47865ade3b172a928df8f990bc7f2a3b9f79"]
+    ]
+}
