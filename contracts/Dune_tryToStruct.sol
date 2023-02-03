@@ -80,8 +80,32 @@ contract Dune is Ownable {
 	}
 
 // etc
-//написать функцию            auroraswap
-//                              аврора             вона              трисол              ниар             юсдт               вона             аврора  
+/*Комментарий для n0ble: В оригинале функции такого вида отрабатывали правильно - но появилась необходимость раздуть набор параметров до 8 переменных как в активных функциях и
+ EVM компилятор солидити начал ругаться что стек слишком глубокий обычно предлогают решать через структуры и массивы что и реализовано в контракте Dune... но отработка под вопросом,
+ в данном контракте структура вынесена за функции и пытается из мэмори пихать их в функции но так как js вызывает переменные в функциях то js не достукивается до структуры 
+ - 
+ тогда как это задать корректно непонятно?
+
+
+  function estimateDualDexTrade(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external view returns (uint256) {
+		uint256 amtBack1 = getAmountOutMin(_router1, _token1, _token2, _amount);
+		uint256 amtBack2 = getAmountOutMin(_router2, _token2, _token1, amtBack1);
+		return amtBack2;
+	}
+	
+  function SpiceHarvester(address _router1, address _router2, address _token1, address _token2, uint256 _amount) external onlyOwner {
+    uint startBalance = IERC20(_token1).balanceOf(address(this));
+    uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
+    swap(_router1,_token1, _token2,_amount);
+    uint token2Balance = IERC20(_token2).balanceOf(address(this));
+    uint tradeableAmount = token2Balance - token2InitialBalance;
+    swap(_router2,_token2, _token1,tradeableAmount);
+    uint endBalance = IERC20(_token1).balanceOf(address(this));
+    require(endBalance > startBalance, "Trade Reverted, No Profit Made");
+  }
+
+
+*///                              аврора             вона              трисол              ниар             юсдт               вона             аврора  
 	function SpiceHarvester(DeepStack memory aurora_router, DeepStack memory wanna_router, DeepStack memory trisolaris_router, 
 	                              DeepStack memory near_token, DeepStack memory usdt_token, DeepStack memory wanna_token, DeepStack memory aurora_token, uint256 _amount) external onlyOwner {
 	// упаковка переменных
